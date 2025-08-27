@@ -33,11 +33,11 @@ Follow these steps to set up and run the project:
 
     Open your terminal or command prompt and clone the repository to your local machine:
     ```bash
-    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+    git clone [https://github.com/sumit-057/Hosho--Product-Inventory-REST-API.git](https://github.com/sumit-057/Hosho--Product-Inventory-REST-API.git)
     ```
     Then, navigate into the project directory:
     ```bash
-    cd your-repository-name
+    cd Hosho--Product-Inventory-REST-API
     ```
 
 2.  **Install Dependencies**
@@ -46,12 +46,20 @@ Follow these steps to set up and run the project:
     ```bash
     pip install Flask
     ```
+    or if pip not work proceed with:
+    ```bash
+    pip3 install Flask
+    ```
 
 3.  **Run the Application**
 
     Start the Flask application by running this command:
     ```bash
     python app.py
+    ```
+    or:
+    ```bash
+    python3 app.py
     ```
     The application will now be running at `http://127.0.0.1:5000`.
 
