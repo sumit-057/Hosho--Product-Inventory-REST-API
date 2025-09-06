@@ -81,6 +81,8 @@ You can use a tool like **Postman** to test these API endpoints.
 
 ### Postman Collection
 
+### URL :- https://sumitsolanki-3191248.postman.co/workspace/Sumit-Solanki's-Workspace~b7a50add-c90c-4483-867e-1e15b5e0db3d/collection/47928026-5fa1bba6-72b1-468b-876a-9c4c92f2bdc3?action=share&creator=47928026
+
 You can easily test the API by importing our Postman Collection.
 
 1.  Download the `ProductInventory_API.json` file from the GitHub repository.
