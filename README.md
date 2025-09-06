@@ -1,7 +1,7 @@
 # Hosho--Product-Inventory-REST-API
 # Product Inventory REST API
 
-This project's goal is to create a simple RESTful API to manage a product inventory. This API is built using **Flask** (a Python framework) and uses an **SQLite** database. It allows you to add, view, update, and delete products.
+This project's goal is to create a simple RESTful API to manage a product inventory. This API is built using Flask (a Python framework) and uses SQLAlchemy ORM for database management (compatible with databases like SQLite, MySQL, and PostgreSQL).
 
 ### Features
 
