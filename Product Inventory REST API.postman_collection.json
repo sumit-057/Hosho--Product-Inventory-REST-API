@@ -9,145 +9,13 @@
 	},
 	"item": [
 		{
-			"name": "Rest_api",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"price\": 950.00,\r\n    \"stock_quantity\": 20\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/products/5",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"products",
-						"5"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://127.0.0.1:5000/products",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Smartphone\",\r\n    \"description\": \"A new Android phone with a great camera.\",\r\n    \"price\": 499.99,\r\n    \"stock_quantity\": 50,\r\n    \"category\": \"Electronics\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/products",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"products"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://127.0.0.1:5000/products",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Smartphone\",\r\n    \"description\": \"A new Android phone with a great camera.\",\r\n    \"price\": 499.99,\r\n    \"stock_quantity\": 50,\r\n    \"category\": \"Electronics\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/products",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"products"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/products/id",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Smartphone\",\r\n    \"description\": \"A new Android phone with a great camera.\",\r\n    \"price\": 499.99,\r\n    \"stock_quantity\": 50,\r\n    \"category\": \"Electronics\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/products/1",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"products",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/delete/:id",
+			"name": "New Request",
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"price\": 475.00,\r\n    \"stock_quantity\": 45\r\n}",
+					"raw": "{\r\n    \"price\": 599.99,\r\n    \"stock_quantity\": 4\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -167,19 +35,140 @@
 					"path": [
 						"products",
 						"1"
+					],
+					"query": [
+						{
+							"key": "Category",
+							"value": "Electronic",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Swift",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "t-shirt",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Powerful laptop for all your needs.",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "/update/:id",
+			"name": "/api/add_product",
 			"request": {
-				"method": "PUT",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"price\": 950.00,\r\n    \"stock_quantity\": 20\r\n}",
+					"raw": "{\r\n    \"name\": \"book\",\r\n    \"description\": \"spritual book\",\r\n    \"price\": 2000,\r\n    \"stock_quantity\": 25,\r\n    \"category\": \"books\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/products",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/products",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Laptop\",\r\n    \"description\": \"Powerful laptop for all your needs.\",\r\n    \"price\": 999.99,\r\n    \"stock_quantity\": 25,\r\n    \"category\": \"Electronics\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/products?sort_by=price",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "Category",
+							"value": "books",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Swift",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "t-shirt",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Powerful laptop for all your needs.",
+							"disabled": true
+						},
+						{
+							"key": "sort_by ",
+							"value": "price",
+							"disabled": true
+						},
+						{
+							"key": "sort_by",
+							"value": "price"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/product/{id:}",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Laptop\",\r\n    \"description\": \"Powerful laptop for all your needs.\",\r\n    \"price\": 999.99,\r\n    \"stock_quantity\": 25,\r\n    \"category\": \"Electronics\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -199,16 +188,138 @@
 					"path": [
 						"products",
 						"5"
+					],
+					"query": [
+						{
+							"key": "Category",
+							"value": "Electronic",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Swift",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "t-shirt",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Powerful laptop for all your needs.",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "New Request",
+			"name": "api/update/{id:}",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"price\": 2000,\r\n    \"stock_quantity\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/products/5",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"products",
+						"5"
+					],
+					"query": [
+						{
+							"key": "Category",
+							"value": "Electronic",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Swift",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "t-shirt",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Powerful laptop for all your needs.",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/delete/{id:}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"price\": 599.99,\r\n    \"stock_quantity\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/products/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"products",
+						"1"
+					],
+					"query": [
+						{
+							"key": "Category",
+							"value": "Electronic",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Swift",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "t-shirt",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "Powerful laptop for all your needs.",
+							"disabled": true
+						}
+					]
+				}
 			},
 			"response": []
 		}
