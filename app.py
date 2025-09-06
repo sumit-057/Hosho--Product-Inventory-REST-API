@@ -1,165 +1,162 @@
 from flask import Flask, request, jsonify
-import sqlite3
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, or_
+from sqlalchemy.orm import sessionmaker, declarative_base, scoped_session
+
+
+DATABASE_URI = 'mysql+mysqlconnector://root:sumit%400605@localhost:3306/inventory_db'
 
 app = Flask(__name__)
 
-# Database setup
-def init_db():
-    with sqlite3.connect("database.db") as conn:
-        c = conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS products (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    description TEXT,
-                    price REAL NOT NULL,
-                    stock_quantity INTEGER NOT NULL,
-                    category TEXT,
-                    is_active INTEGER DEFAULT 1)''')
-        conn.commit()
+# SQLAlchemy setup
+Base = declarative_base()
+engine = create_engine(DATABASE_URI)
+Session = sessionmaker(bind=engine)
+session = scoped_session(Session)  # Corrected to use scoped_session
 
-init_db()
+# Product Model
+class Product(Base):
+    __tablename__ = 'products'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    description = Column(String(500), default='')
+    price = Column(Float, nullable=False)
+    stock_quantity = Column(Integer, nullable=False)
+    category = Column(String(100), default='')
+    is_active = Column(Boolean, default=True)
 
-# Helper function to get a database connection
-def get_db_connection():
-    conn = sqlite3.connect("database.db")
-    conn.row_factory = sqlite3.Row  # This allows fetching rows as dictionaries
-    return conn
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'price': self.price,
+            'stock_quantity': self.stock_quantity,
+            'category': self.category,
+            'is_active': self.is_active
+        }
 
-# Add a Product
+# Create the database table if it doesn't exist
+Base.metadata.create_all(engine)
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    session.remove()
+
+@app.route("/")
+def home():
+    return jsonify({"message": "Welcome to the Product Inventory API!"}), 200
+
+# Add a Product 
 @app.route("/products", methods=["POST"])
 def add_product():
     data = request.get_json()
     if not data or 'name' not in data or 'price' not in data or 'stock_quantity' not in data:
         return jsonify({"error": "Missing required fields"}), 400
 
-    name = data['name']
-    description = data.get('description', '')
-    price = data['price']
-    stock_quantity = data['stock_quantity']
-    category = data.get('category', '')
-
     try:
-        conn = get_db_connection()
-        conn.execute("INSERT INTO products (name, description, price, stock_quantity, category) VALUES (?, ?, ?, ?, ?)",
-                     (name, description, price, stock_quantity, category))
-        conn.commit()
-        product_id = conn.cursor().lastrowid
-        conn.close()
-        return jsonify({"message": "Product added successfully", "id": product_id}), 201
-    except sqlite3.Error as e:
+        new_product = Product(
+            name=data['name'],
+            description=data.get('description', ''),
+            price=data['price'],
+            stock_quantity=data['stock_quantity'],
+            category=data.get('category', '')
+        )
+        session.add(new_product)
+        session.commit()
+        return jsonify({"message": "Product added successfully", "id": new_product.id}), 201
+    except Exception as e:
+        session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# Get All Products with optional filtering, sorting, and pagination
+# Get Products 
 @app.route("/products", methods=["GET"])
 def get_products():
     category = request.args.get('category')
     sort_by = request.args.get('sort_by')
+    order = request.args.get('order', 'asc')  # default asc
     search_query = request.args.get('search')
     page = request.args.get('page', 1, type=int)
     limit = request.args.get('limit', 10, type=int)
-    
-    conn = get_db_connection()
-    query = "SELECT * FROM products WHERE is_active=1"
-    params = []
 
+    query = session.query(Product).filter(Product.is_active == True)
+
+    # Category filter
     if category:
-        query += " AND category = ?"
-        params.append(category)
-
+        query = query.filter(Product.category == category)
+    
+    # Search filter (case-insensitive)
     if search_query:
-        query += " AND (name LIKE ? OR description LIKE ?)"
-        params.append(f"%{search_query}%")
-        params.append(f"%{search_query}%")
-    
+        search_pattern = f"%{search_query}%"
+        query = query.filter(or_(
+            Product.name.ilike(search_pattern),
+            Product.description.ilike(search_pattern)
+        ))
+
+    # Sorting
     if sort_by == 'price':
-        query += " ORDER BY price"
-    
+        query = query.order_by(Product.price.desc() if order == 'desc' else Product.price)
+
     # Pagination
     offset = (page - 1) * limit
-    query += " LIMIT ? OFFSET ?"
-    params.append(limit)
-    params.append(offset)
+    products = query.offset(offset).limit(limit).all()
 
-    products = conn.execute(query, tuple(params)).fetchall()
-    conn.close()
-    
-    products_list = [dict(product) for product in products]
-    return jsonify(products_list), 200
+    return jsonify([product.to_dict() for product in products]), 200
 
-# Get a single product by ID
+# Get Product by ID 
 @app.route("/products/<int:id>", methods=["GET"])
 def get_product_by_id(id):
-    conn = get_db_connection()
-    product = conn.execute("SELECT * FROM products WHERE id=? AND is_active=1", (id,)).fetchone()
-    conn.close()
-    
-    if product is None:
+    product = session.query(Product).filter_by(id=id, is_active=True).first()
+    if not product:
         return jsonify({"error": "Product not found"}), 404
-    
-    return jsonify(dict(product)), 200
+    return jsonify(product.to_dict()), 200
 
-# Update a Product
+# Update Product 
 @app.route("/products/<int:id>", methods=["PUT"])
 def update_product(id):
     data = request.get_json()
-    conn = get_db_connection()
-    
-    product = conn.execute("SELECT * FROM products WHERE id=? AND is_active=1", (id,)).fetchone()
-    if product is None:
-        conn.close()
+    product = session.query(Product).filter_by(id=id, is_active=True).first()
+    if not product:
         return jsonify({"error": "Product not found"}), 404
 
-    # Build update query dynamically
-    updates = []
-    params = []
-    
     if 'name' in data:
-        updates.append("name = ?")
-        params.append(data['name'])
+        product.name = data['name']
     if 'description' in data:
-        updates.append("description = ?")
-        params.append(data['description'])
+        product.description = data['description']
     if 'price' in data:
-        updates.append("price = ?")
-        params.append(data['price'])
+        product.price = data['price']
     if 'stock_quantity' in data:
-        updates.append("stock_quantity = ?")
-        params.append(data['stock_quantity'])
-        # Optional: Low-stock alert check
-        if data['stock_quantity'] < 5:
-            print(f"Low stock alert for product ID {id}: Stock is at {data['stock_quantity']}")
+        product.stock_quantity = data['stock_quantity']
+        alert_message = None
+        if product.stock_quantity < 5:
+            alert_message = f" Low stock alert for product ID {id}: Stock is at {product.stock_quantity}"
     if 'category' in data:
-        updates.append("category = ?")
-        params.append(data['category'])
+        product.category = data['category']
 
-    if not updates:
-        conn.close()
-        return jsonify({"error": "No fields to update"}), 400
+    try:
+        session.commit()
+        response = {"message": "Product updated successfully"}
+        if alert_message:
+            response["alert"] = alert_message
+        return jsonify(response), 200
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
 
-    query = "UPDATE products SET " + ", ".join(updates) + " WHERE id = ?"
-    params.append(id)
-    
-    conn.execute(query, tuple(params))
-    conn.commit()
-    conn.close()
-    
-    return jsonify({"message": "Product updated successfully"}), 200
 
-# Soft Delete Product
+# Soft Delete Product 
 @app.route("/products/<int:id>", methods=["DELETE"])
 def delete_product(id):
-    conn = get_db_connection()
-    product = conn.execute("SELECT id FROM products WHERE id=? AND is_active=1", (id,)).fetchone()
-    
-    if product is None:
-        conn.close()
+    product = session.query(Product).filter_by(id=id, is_active=True).first()
+    if not product:
         return jsonify({"error": "Product not found"}), 404
     
-    conn.execute("UPDATE products SET is_active=0 WHERE id=?", (id,))
-    conn.commit()
-    conn.close()
-    
-    return jsonify({"message": "Product soft-deleted successfully"}), 200
+    try:
+        product.is_active = False
+        session.commit()
+        return jsonify({"message": "Product soft-deleted successfully"}), 200
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
